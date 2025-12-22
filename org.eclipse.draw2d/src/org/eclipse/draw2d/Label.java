@@ -147,26 +147,18 @@ public class Label extends Figure implements PositionConstants {
 		Dimension offset = getSize().getShrinked(getPreferredSize());
 		offset.width += getTextSize().width - getSubStringTextSize().width;
 		switch (labelAlignment) {
-		case CENTER:
-			offset.scale(0.5f);
-			break;
-		case LEFT:
-			offset.scale(0.0f);
-			break;
-		case RIGHT:
-			offset.scale(1.0f);
-			break;
-		case TOP:
+		case CENTER -> offset.scale(0.5f);
+		case LEFT -> offset.scale(0.0f);
+		case RIGHT -> offset.scale(1.0f);
+		case TOP -> {
 			offset.height = 0;
 			offset.scale(0.5f);
-			break;
-		case BOTTOM:
+		}
+		case BOTTOM -> {
 			offset.height = offset.height * 2;
 			offset.scale(0.5f);
-			break;
-		default:
-			offset.scale(0.5f);
-			break;
+		}
+		default -> offset.scale(0.5f);
 		}
 
 		switch (textPlacement) {
@@ -508,12 +500,22 @@ public class Label extends Figure implements PositionConstants {
 		if (!isEnabled()) {
 			graphics.translate(1, 1);
 			graphics.setForegroundColor(ColorConstants.buttonLightest);
-			graphics.drawText(getSubStringText(), getTextLocation());
+			drawText(graphics);
 			graphics.translate(-1, -1);
 			graphics.setForegroundColor(ColorConstants.buttonDarker);
 		}
-		graphics.drawText(getSubStringText(), getTextLocation());
+		drawText(graphics);
 		graphics.translate(-bounds.x, -bounds.y);
+	}
+
+	private void drawText(Graphics graphics) {
+		final Dimension textSizeToUse = getSubStringTextSize();
+		if ((textSizeToUse.height * graphics.getAbsoluteScale()) < 3) {
+			graphics.setBackgroundColor(getForegroundColor());
+			graphics.fillRectangle(0, 0, textSizeToUse.width, textSizeToUse.height);
+		} else {
+			graphics.drawText(getSubStringText(), getTextLocation());
+		}
 	}
 
 	/**
